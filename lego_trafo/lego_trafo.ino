@@ -46,7 +46,7 @@ void SetMotorControl(int motorId, int motorDirection, int motorSpeed)
 //    digitalWrite(PIN_M_DIRA, 1);
 //    digitalWrite(PIN_M_DIRB, 0);
 //  }
-//  else
+//  els
 //  {
 //    // break
 //    digitalWrite(PIN_M_DIRA, 0);
