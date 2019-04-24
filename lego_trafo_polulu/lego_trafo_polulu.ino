@@ -3,9 +3,12 @@
 const int PIN_DIAL = A2;
 const int PIN_BTN_STOP = 3;
 const int PIN_BTN_START = 5;
+const int step_size_start = 5;
+const int step_size_stop = 25;
 
 DualTB9051FTGMotorShield md;
 int currentSpeed = 0;
+int currentStepSize = step_size_start;
 
 void stopIfFault()
 {
@@ -47,7 +50,7 @@ void setMotorSpeed(int currentSpeed) {
 
 void loop()
 {
-  delay(50);
+  delay(100);
   stopIfFault();
 
   int btnStart = digitalRead(PIN_BTN_START);
@@ -55,11 +58,13 @@ void loop()
     stopped = false;
     md.setM1Speed(0);
     currentSpeed = 0;
+    currentStepSize = step_size_start;
 //    md.enableDrivers();
   }
   int btnStop = digitalRead(PIN_BTN_STOP);
   if (!stopped && btnStop == LOW) {
     stopped = true;
+    currentStepSize = step_size_stop;
 //    while (abs(currentSpeed) > 50) {
 //      int dir = currentSpeed/abs(currentSpeed);
 //      currentSpeed = currentSpeed - dir * 10;
@@ -83,9 +88,9 @@ void loop()
 //  }
 
   int diff = desiredSpeed - currentSpeed;
-  int incr_step = 10 * diff / abs(diff);
+  int incr_step = currentStepSize * diff / abs(diff);
   currentSpeed = currentSpeed + incr_step;
-  if ( abs(diff) < 50) {
+  if ( abs(diff) < currentStepSize) {
     currentSpeed = desiredSpeed;
   }
   md.setM1Speed(currentSpeed);
