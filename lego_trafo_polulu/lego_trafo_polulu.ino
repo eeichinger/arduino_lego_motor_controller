@@ -44,10 +44,6 @@ void setup()
 
 bool stopped = true;
 
-void setMotorSpeed(int currentSpeed) {
-  
-}
-
 void loop()
 {
   delay(100);
@@ -65,15 +61,6 @@ void loop()
   if (!stopped && btnStop == LOW) {
     stopped = true;
     currentStepSize = step_size_stop;
-//    while (abs(currentSpeed) > 50) {
-//      int dir = currentSpeed/abs(currentSpeed);
-//      currentSpeed = currentSpeed - dir * 10;
-//      md.setM1Speed(currentSpeed);
-//    }    
-//    currentSpeed = 0;
-//    md.setM1Speed(currentSpeed);
-//    delay(10);
-//    md.disableDrivers();
   }
 
 
@@ -82,10 +69,6 @@ void loop()
   if (stopped || abs(desiredSpeed) < 50) {
     desiredSpeed = 0;
   }
-//  if (stopped) {
-//    Serial.println("Stopped");
-//    return;
-//  }
 
   int diff = desiredSpeed - currentSpeed;
   int incr_step = currentStepSize * diff / abs(diff);
@@ -107,79 +90,4 @@ void loop()
   Serial.print(currentSpeed);
   Serial.print(", M1 current: ");
   Serial.println(md.getM1CurrentMilliamps());
-
-  //  for (int i = 0; i <= 400; i++)
-  //  {
-  //    md.setM1Speed(i);
-  //    stopIfFault();
-  //    if (abs(i)%200 == 100)
-  //    {
-  //      Serial.print("M1 current: ");
-  //      Serial.println(md.getM1CurrentMilliamps());
-  //    }
-  //    delay(2);
-  //  }
-
-  //  for (int i = 400; i >= -400; i--)
-  //  {
-  //    md.setM1Speed(i);
-  //    stopIfFault();
-  //    if (abs(i)%200 == 100)
-  //    {
-  //      Serial.print("M1 current: ");
-  //      Serial.println(md.getM1CurrentMilliamps());
-  //    }
-  //    delay(2);
-  //  }
-  //
-  //  for (int i = -400; i <= 0; i++)
-  //  {
-  //    md.setM1Speed(i);
-  //    stopIfFault();
-  //    if (abs(i)%200 == 100)
-  //    {
-  //      Serial.print("M1 current: ");
-  //      Serial.println(md.getM1CurrentMilliamps());
-  //    }
-  //    delay(2);
-  //  }
-  //
-  //  for (int i = 0; i <= 400; i++)
-  //  {
-  //    md.setM2Speed(i);
-  //    stopIfFault();
-  //    if (abs(i)%200 == 100)
-  //    {
-  //      Serial.print("M2 current: ");
-  //      Serial.println(md.getM2CurrentMilliamps());
-  //    }
-  //    delay(2);
-  //  }
-  //
-  //  for (int i = 400; i >= -400; i--)
-  //  {
-  //    md.setM2Speed(i);
-  //    stopIfFault();
-  //    if (abs(i)%200 == 100)
-  //    {
-  //      Serial.print("M2 current: ");
-  //      Serial.println(md.getM2CurrentMilliamps());
-  //    }
-  //    delay(2);
-  //  }
-  //
-  //  for (int i = -400; i <= 0; i++)
-  //  {
-  //    md.setM2Speed(i);
-  //    stopIfFault();
-  //    if (abs(i)%200 == 100)
-  //    {
-  //      Serial.print("M2 current: ");
-  //      Serial.println(md.getM2CurrentMilliamps());
-  //    }
-  //    delay(2);
-  //  }
-  //  delay(5000);
-  //  md.disableDrivers();
-  //  delay(500);
 }
