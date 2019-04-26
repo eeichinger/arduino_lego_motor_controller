@@ -1,6 +1,9 @@
 #include "DualTB9051FTGMotorShield.h"
 
 const int PIN_DIAL = A2;
+const int PIN_LED_STARTED = 11;
+const int PIN_LED_STOPPED = 13;
+const int PIN_BUZZER = A3;
 const int PIN_BTN_STOP = 3;
 const int PIN_BTN_START = 5;
 const int step_size_start = 5;
@@ -9,6 +12,8 @@ const int step_size_stop = 25;
 DualTB9051FTGMotorShield md;
 int currentSpeed = 0;
 int currentStepSize = step_size_start;
+bool isStopped = true;
+
 
 void stopIfFault()
 {
@@ -31,6 +36,11 @@ void setup()
   Serial.begin(9600);
   Serial.println("Dual TB9051FTG Motor Shield");
   pinMode(PIN_DIAL, INPUT);
+  pinMode(PIN_LED_STARTED, OUTPUT);
+  pinMode(PIN_LED_STOPPED, OUTPUT);
+  pinMode(PIN_BUZZER, OUTPUT);
+  digitalWrite(PIN_LED_STARTED, LOW);
+  digitalWrite(PIN_LED_STOPPED, HIGH);
   pinMode(PIN_BTN_STOP, INPUT_PULLUP);
   pinMode(PIN_BTN_START, INPUT_PULLUP);
 
@@ -42,31 +52,38 @@ void setup()
   delay(1); // wait for drivers to be enabled so fault pins are no longer low
 }
 
-bool stopped = true;
-
 void loop()
 {
-  delay(100);
+  delay(5);
   stopIfFault();
 
   int btnStart = digitalRead(PIN_BTN_START);
-  if (stopped && btnStart == LOW) {
-    stopped = false;
+  if (isStopped && btnStart == LOW) {
+    isStopped = false;
     md.setM1Speed(0);
     currentSpeed = 0;
     currentStepSize = step_size_start;
-//    md.enableDrivers();
+    digitalWrite(PIN_LED_STARTED, HIGH);
+    digitalWrite(PIN_LED_STOPPED, LOW);
+    noTone(PIN_BUZZER);
+    tone(PIN_BUZZER, 440, 2000);
+    delay(1000);
+    //    md.enableDrivers();
   }
   int btnStop = digitalRead(PIN_BTN_STOP);
-  if (!stopped && btnStop == LOW) {
-    stopped = true;
+  if (!isStopped && btnStop == LOW) {
+    isStopped = true;
     currentStepSize = step_size_stop;
+    digitalWrite(PIN_LED_STARTED, LOW);
+    digitalWrite(PIN_LED_STOPPED, HIGH);
+    noTone(PIN_BUZZER);
+    tone(PIN_BUZZER, 220, 750);
   }
 
 
   int dial_pos = analogRead(PIN_DIAL);
   int desiredSpeed = map(dial_pos, 0, 1023, -400, 400);
-  if (stopped || abs(desiredSpeed) < 50) {
+  if (isStopped || abs(desiredSpeed) < 50) {
     desiredSpeed = 0;
   }
 
@@ -79,7 +96,7 @@ void loop()
   md.setM1Speed(currentSpeed);
 
   Serial.print("Stopped: ");
-  Serial.print(stopped);
+  Serial.print(isStopped);
   Serial.print(", Start: ");
   Serial.print(btnStart);
   Serial.print(", Stop: ");
